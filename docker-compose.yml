@@ -1,0 +1,74 @@
+version: '3.6'
+
+# links:
+# - https://www.diacamma.org/
+# - https://syndic.diacamma.org/static/diacamma.syndic/doc_fr/
+# - https://github.com/mgodlewski/dockerfiles/tree/master/diacamma
+
+# paramétrage: (https://github.com/mgodlewski/dockerfiles/tree/master/diacamma#use-mysql-database)
+#  - DIACAMMA_TYPE: syndic ou asso
+#  - DIACAMMA_ORGANISATION: nom de l'organisation (syndic), sans espace, 
+#  - DIACAMMA_DATABASE: sqlite (par défaut), mysql, postgresql
+
+# run docker-compose with --compatibility opt.
+
+x-defaults-std:
+    &default-settings-std
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "20k"
+        max-file: "5"
+    tmpfs:
+      - /tmp
+      - /run
+    networks:
+     - internal
+
+x-defaults-ress:
+    &default-settings-ressources
+    deploy:
+      restart_policy:
+        condition: on-failure
+        max_attempts: 5
+      resources:
+        limits:
+          cpus: '2.0'
+          memory: 100M
+        reservations:
+          memory: 25M
+    ulimits:
+      nproc: 128
+      nofile:
+        soft: 1024
+        hard: 2048
+    cap_drop:
+     - ALL
+
+services:
+
+  app:
+    <<: *default-settings-std
+    <<: *default-settings-ressources
+    image: diacamma:build-local-custom-01
+    # read_only: true
+    build:
+      context: ./build/diacama-syndic/
+      dockerfile: Dockerfile
+      # args:
+        # TAG: 1.34.0
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:8100:8100"
+    volumes:
+      - ./data/diacamma/backups/:/backups
+      - ./data/diacamma/data:/var/lucterios2/ramier-des-cedres-1
+      - ./data/diacamma/var/error.log:/var/lucterios2/error.log
+    environment:
+      - DIACAMMA_TYPE=syndic
+      - DIACAMMA_ORGANISATION=ramier-des-cedres-1
+      - DIACAMMA_DATABASE=sqlite
+
+networks:
+  internal:
