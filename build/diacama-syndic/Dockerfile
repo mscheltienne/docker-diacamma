@@ -30,3 +30,6 @@ RUN set -x ; \
   pip install -U $PIP_OPTION $PACKAGES
 
 ADD launch_lucterios.sh $LUCTERIOS_PATH
+
+EXPOSE 8100
+ENTRYPOINT $LUCTERIOS_PATH/launch_lucterios.sh
