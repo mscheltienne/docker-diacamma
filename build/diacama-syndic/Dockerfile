@@ -18,8 +18,9 @@ RUN set -x ; \
 WORKDIR $LUCTERIOS_PATH
 
 RUN set -x ; \
-  mkdir -p $LUCTERIOS_PATH ; \
+  mkdir -p $LUCTERIOS_PATH
 
+# create new python "virtualenv" space named "virtual_for_lucterios"
 RUN set -x ; \
   rm -rf virtual_for_lucterios ; \
   python3 -m virtualenv virtual_for_lucterios
@@ -37,15 +38,17 @@ RUN set -x ; \
   . $LUCTERIOS_PATH/virtual_for_lucterios/bin/activate ; \
   pip install psycopg2-binary
 
+# mysqlclient -> generate error
 # RUN set -x ; \
 #   . $LUCTERIOS_PATH/virtual_for_lucterios/bin/activate ; \
 #   pip install mysqlclient
 
 ADD launch_lucterios.sh $LUCTERIOS_PATH
+ADD env-lucterios.sh $LUCTERIOS_PATH
+ADD bin /usr/local/bin
 ADD entrypoint.d /entrypoint.d
 
-RUN ls /entrypoint.d
-
+# RUN ls /entrypoint.d /usr/local/bin
 
 EXPOSE 8100
 ENTRYPOINT /entrypoint.d/entrypoint.sh run

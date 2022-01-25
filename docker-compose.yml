@@ -4,6 +4,7 @@ version: '3.6'
 # - https://www.diacamma.org/
 # - https://syndic.diacamma.org/static/diacamma.syndic/doc_fr/
 # - https://github.com/mgodlewski/dockerfiles/tree/master/diacamma
+# - https://github.com/mqu/docker-diacamma
 
 # paramétrage: (https://github.com/mgodlewski/dockerfiles/tree/master/diacamma#use-mysql-database)
 #  - DIACAMMA_TYPE: syndic ou asso
@@ -51,7 +52,7 @@ services:
   app:
     <<: *default-settings-std
     <<: *default-settings-ressources
-    image: diacamma:build-local-custom-01
+    image: local-build/diacamma/v01
     # read_only: true
     build:
       context: ./build/diacama-syndic/
