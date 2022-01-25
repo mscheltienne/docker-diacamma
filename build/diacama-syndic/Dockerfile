@@ -29,7 +29,24 @@ RUN set -x ; \
   pip install -U $PIP_OPTION pip ; \
   pip install -U $PIP_OPTION $PACKAGES
 
+RUN set -x ; \
+  . $LUCTERIOS_PATH/virtual_for_lucterios/bin/activate ; \
+  pip install gunicorn
+
+RUN set -x ; \
+  . $LUCTERIOS_PATH/virtual_for_lucterios/bin/activate ; \
+  pip install psycopg2-binary
+
+# RUN set -x ; \
+#   . $LUCTERIOS_PATH/virtual_for_lucterios/bin/activate ; \
+#   pip install mysqlclient
+
 ADD launch_lucterios.sh $LUCTERIOS_PATH
+ADD entrypoint.d /entrypoint.d
+
+RUN ls /entrypoint.d
+
 
 EXPOSE 8100
-ENTRYPOINT $LUCTERIOS_PATH/launch_lucterios.sh
+ENTRYPOINT /entrypoint.d/entrypoint.sh run
+
