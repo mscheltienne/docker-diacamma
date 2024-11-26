@@ -50,8 +50,7 @@ x-defaults-ress:
 services:
 
   app:
-    <<: *default-settings-std
-    <<: *default-settings-ressources
+    <<: [*default-settings-std, *default-settings-ressources]
     image: local-build/diacamma/v01
     # read_only: true
     build:
